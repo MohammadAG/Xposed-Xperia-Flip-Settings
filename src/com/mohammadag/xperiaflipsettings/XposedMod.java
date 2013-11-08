@@ -11,6 +11,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.content.res.XModuleResources;
 import android.content.res.XmlResourceParser;
 import android.graphics.drawable.Drawable;
@@ -27,6 +28,7 @@ import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
+import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_InitPackageResources.InitPackageResourcesParam;
@@ -41,10 +43,14 @@ public class XposedMod implements IXposedHookLoadPackage, IXposedHookInitPackage
 	private Drawable mClearButtonDrawable;
 	private Drawable mClearButtonBackground;
 	private int mNotificationLightsOutId;
+	private Drawable mSettingsButtonDrawable;
+	private XSharedPreferences mPreferences;
 
 	@Override
 	public void initZygote(StartupParam startupParam) throws Throwable {
 		MODULE_PATH = startupParam.modulePath;
+		mPreferences = new XSharedPreferences(this.getClass().getPackage().getName());
+		mPreferences.makeWorldReadable();
 	}
 
 	@Override
@@ -99,6 +105,11 @@ public class XposedMod implements IXposedHookLoadPackage, IXposedHookInitPackage
 				/* The settings button itself is hidden. */
 				View settingsButton = (View) getObjectField(param.thisObject, "mSettingsButton");
 				settingsButton.setVisibility(View.VISIBLE);
+				if (mPreferences.getBoolean(Constants.SETTINGS_KEY_REPLACE_SETTINGS_ICON, true)) {
+					if (settingsButton instanceof ImageView) {
+						((ImageView) settingsButton).setImageDrawable(mSettingsButtonDrawable);
+					}
+				}
 
 				final Object mStatusBar = param.thisObject;
 				/* Why not? */
@@ -145,7 +156,8 @@ public class XposedMod implements IXposedHookLoadPackage, IXposedHookInitPackage
 		 * complex to simply do things before or after it.
 		 * 
 		 * Much of this code is taken from AOSP's source, modified to use reflection.
-		 * Therefore, this code is technically licensed under this license:
+		 * Therefore, this method (setAreThereNotifications) replacement is technically
+		 * licensed under this license:
 		 */
 
 		/*
@@ -257,6 +269,7 @@ public class XposedMod implements IXposedHookLoadPackage, IXposedHookInitPackage
 		mClearButtonXml = modRes.getXml(R.layout.clear_button);
 		mClearButtonDrawable = modRes.getDrawable(R.drawable.ic_notify_clear);
 		mClearButtonBackground = modRes.getDrawable(R.drawable.ic_notify_button_bg);
+		mSettingsButtonDrawable = modRes.getDrawable(R.drawable.ic_notify_quicksettings);
 		mHeaderHeight = modRes.getDimensionPixelSize(R.dimen.notification_panel_header_height);
 
 		/* Set these configuration booleans to true, nice of Sony to leave the code that creates
@@ -273,6 +286,24 @@ public class XposedMod implements IXposedHookLoadPackage, IXposedHookInitPackage
 				modRes.fwd(R.dimen.notification_panel_header_height));
 		resparam.res.setReplacement("com.android.systemui", "dimen", "notification_panel_header_base_height",
 				modRes.fwd(R.dimen.notification_panel_header_base_height));
+		
+		if (mPreferences.getBoolean(Constants.SETTINGS_KEY_REPLACE_HANDLE_BAR, true)) {
+			/* Replace the handle bar with the AOSP one */
+			resparam.res.setReplacement("com.android.systemui", "drawable", "status_bar_close",
+					modRes.fwd(R.drawable.status_bar_close));
+		}
+		
+		if (mPreferences.getBoolean(Constants.SETTINGS_KEY_REPLACE_SETTINGS_ICON, true)) {
+			try {
+				resparam.res.setReplacement("com.android.systemui", "drawable", "ic_notify_setting",
+						modRes.fwd(R.drawable.ic_notify_settings));
+			} catch (Resources.NotFoundException e) { }
+			
+			try {
+				resparam.res.setReplacement("com.android.systemui", "drawable", "ic_notify_settings",
+						modRes.fwd(R.drawable.ic_notify_settings));
+			} catch (Resources.NotFoundException e) {}
+		}
 
 		/* Not sure if this is needed, but since Sony left the original AOSP layouts available, we'll
 		 * replace theirs with the AOSP ones.

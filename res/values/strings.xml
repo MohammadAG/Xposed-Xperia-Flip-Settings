@@ -2,5 +2,10 @@
 
     <string name="app_name">Xperia Flip Settings</string>
     <string name="accessibility_clear_all">This should not be heard, if it is, contact MohammadAG about his status bar module</string>
-
+    <string name="aosp_handle_bar_title">AOSP Handle Bar</string>
+    <string name="aosp_handle_bar_summary">Replaces Sony\'s handle bar (under carrier label) with AOSP\'s</string>
+    <string name="aosp_settings_icon_title">Replace Sony\'s quick settings icon with AOSP\'s</string>
+    <string name="aosp_settings_icon_summary">Replaces the quick settings icon in the notification panel with the AOSP icon</string>
+    <string name ="reboot_to_apply">Soft reboot your device to apply these settings</string>
+    
 </resources>
