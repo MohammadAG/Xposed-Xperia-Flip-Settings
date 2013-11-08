@@ -286,19 +286,19 @@ public class XposedMod implements IXposedHookLoadPackage, IXposedHookInitPackage
 				modRes.fwd(R.dimen.notification_panel_header_height));
 		resparam.res.setReplacement("com.android.systemui", "dimen", "notification_panel_header_base_height",
 				modRes.fwd(R.dimen.notification_panel_header_base_height));
-		
+
 		if (mPreferences.getBoolean(Constants.SETTINGS_KEY_REPLACE_HANDLE_BAR, true)) {
 			/* Replace the handle bar with the AOSP one */
 			resparam.res.setReplacement("com.android.systemui", "drawable", "status_bar_close",
 					modRes.fwd(R.drawable.status_bar_close));
 		}
-		
+
 		if (mPreferences.getBoolean(Constants.SETTINGS_KEY_REPLACE_SETTINGS_ICON, true)) {
 			try {
 				resparam.res.setReplacement("com.android.systemui", "drawable", "ic_notify_setting",
 						modRes.fwd(R.drawable.ic_notify_settings));
 			} catch (Resources.NotFoundException e) { }
-			
+
 			try {
 				resparam.res.setReplacement("com.android.systemui", "drawable", "ic_notify_settings",
 						modRes.fwd(R.drawable.ic_notify_settings));

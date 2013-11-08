@@ -1,4 +1,5 @@
 package com.mohammadag.xperiaflipsettings;
+
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -8,12 +9,12 @@ import android.widget.Toast;
 
 public class SettingsActivity extends PreferenceActivity {
 	private boolean mDirty = false;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		/* Consistency with Xposed, make the user feel this is part of it. */
 		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-		
+
 		super.onCreate(savedInstanceState);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 	}
@@ -31,7 +32,7 @@ public class SettingsActivity extends PreferenceActivity {
 		super.onPostCreate(savedInstanceState);
 		getPreferenceManager().setSharedPreferencesMode(MODE_WORLD_READABLE);
 		addPreferencesFromResource(R.xml.preferences);
-		
+
 		OnPreferenceChangeListener listener = new OnPreferenceChangeListener() {
 			@Override
 			public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -39,7 +40,7 @@ public class SettingsActivity extends PreferenceActivity {
 				return true;
 			}
 		};
-		
+
 		findPreference(Constants.SETTINGS_KEY_REPLACE_HANDLE_BAR).setOnPreferenceChangeListener(listener);
 		findPreference(Constants.SETTINGS_KEY_REPLACE_SETTINGS_ICON).setOnPreferenceChangeListener(listener);
 	}

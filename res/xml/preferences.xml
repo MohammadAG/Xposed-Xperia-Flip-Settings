@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-    <CheckBoxPreference android:key="pref_aosp_handle_bar" android:title="@string/aosp_handle_bar_title" android:summary="@string/aosp_handle_bar_summary" android:defaultValue="true"/>
-    <CheckBoxPreference android:key="pref_aosp_settings_icon" android:title="@string/aosp_settings_icon_title" android:summary="@string/aosp_settings_icon_summary" android:defaultValue="true"/>
-    
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="pref_aosp_handle_bar"
+        android:summary="@string/aosp_handle_bar_summary"
+        android:title="@string/aosp_handle_bar_title" />
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="pref_aosp_settings_icon"
+        android:summary="@string/aosp_settings_icon_summary"
+        android:title="@string/aosp_settings_icon_title" />
 
 </PreferenceScreen>
